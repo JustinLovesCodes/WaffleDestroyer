@@ -12,12 +12,12 @@ public final class Ports {
     public static final int kIntakeRollers = 8;
     public static final int kFloor = 11;
     public static final int kFeeder = 12;
-    public static final int kShooterLeft = 0;
+    public static final int kShooterLeft = 50;
     public static final int kShooterMiddle = 13;
     public static final int kShooterRight = 14;
     public static final int kHanger = 15;
 
     // PWM Ports
-    public static final int kHoodLeftServo = 4;
-    public static final int kHoodRightServo = 3;
+    public static final int kHoodLeftServo = 3;
+    public static final int kHoodRightServo = 4;
 }

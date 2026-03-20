@@ -1,0 +1,59 @@
+package frc.robot.subsystems;
+
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
+
+public class SwerveDrive {
+
+    private final SwerveModule frontLeft; (21,15,16)
+    private final SwerveModule frontRight; (5,6,18)
+    private final SwerveModule backLeft; (2,26,17)
+    private final SwerveModule backRight; (10,9,19)
+
+    // Wheel positions relative to robot center (meters)
+    private final SwerveDriveKinematics kinematics;
+
+    public SwerveDrive(
+        SwerveModule fl, SwerveModule fr,
+        SwerveModule bl, SwerveModule br,
+        double wheelBase, double trackWidth
+    ) {
+        this.frontLeft = fl;
+        this.frontRight = fr;
+        this.backLeft = bl;
+        this.backRight = br;
+
+        // Define module locations for kinematics
+        kinematics = new SwerveDriveKinematics(
+            new edu.wpi.first.math.geometry.Translation2d(+wheelBase/2, +trackWidth/2),
+            new edu.wpi.first.math.geometry.Translation2d(+wheelBase/2, -trackWidth/2),
+            new edu.wpi.first.math.geometry.Translation2d(-wheelBase/2, +trackWidth/2),
+            new edu.wpi.first.math.geometry.Translation2d(-wheelBase/2, -trackWidth/2)
+        );
+    }
+
+    /** Initialize all modules: zero drive and calibrate steering */
+    public void initModules() {
+        frontLeft.initModule();
+        frontRight.initModule();
+        backLeft.initModule();
+        backRight.initModule();
+    }
+
+    /**
+     * Drive robot using field-oriented controls
+     * @param chassisSpeeds desired velocities (vx, vy in m/s, omega in rad/s)
+     */
+    public void drive(ChassisSpeeds chassisSpeeds) {
+        // Convert chassis speeds to individual swerve module states
+        SwerveModuleState[] states = kinematics.toSwerveModuleStates(chassisSpeeds);
+
+        // Apply states to each module
+        frontLeft.setDesiredState(states[0].angle.getDegrees(), states[0].speedMetersPerSecond);
+        frontRight.setDesiredState(states[1].angle.getDegrees(), states[1].speedMetersPerSecond);
+        backLeft.setDesiredState(states[2].angle.getDegrees(), states[2].speedMetersPerSecond);
+        backRight.setDesiredState(states[3].angle.getDegrees(), states[3].speedMetersPerSecond);
+    }
+}
