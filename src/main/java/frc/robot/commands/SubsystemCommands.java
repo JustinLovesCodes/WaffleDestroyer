@@ -19,7 +19,7 @@ public final class SubsystemCommands {
     private final Feeder feeder;
     private final Shooter shooter;
     private final Hood hood;
-    private final Hanger hanger;
+    //private final Hanger hanger;
 
     private final DoubleSupplier forwardInput;
     private final DoubleSupplier leftInput;
@@ -31,7 +31,7 @@ public final class SubsystemCommands {
         Feeder feeder,
         Shooter shooter,
         Hood hood,
-        Hanger hanger,
+        //Hanger hanger,
         DoubleSupplier forwardInput,
         DoubleSupplier leftInput
     ) {
@@ -41,7 +41,7 @@ public final class SubsystemCommands {
         this.feeder = feeder;
         this.shooter = shooter;
         this.hood = hood;
-        this.hanger = hanger;
+        //this.hanger = hanger;
 
         this.forwardInput = forwardInput;
         this.leftInput = leftInput;
@@ -53,8 +53,8 @@ public final class SubsystemCommands {
         Floor floor,
         Feeder feeder,
         Shooter shooter,
-        Hood hood,
-        Hanger hanger
+        Hood hood
+        //Hanger hanger
     ) {
         this(
             swerve,
@@ -63,7 +63,7 @@ public final class SubsystemCommands {
             feeder,
             shooter,
             hood,
-            hanger,
+            //hanger,
             () -> 0,
             () -> 0
         );
@@ -89,7 +89,7 @@ public final class SubsystemCommands {
 
     public Command feed() {
         return Commands.sequence(
-            Commands.waitSeconds(1.50),
+            Commands.waitSeconds(3.00),
             Commands.parallel(
                 feeder.feedCommand(),
                 Commands.waitSeconds(0.125)

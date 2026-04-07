@@ -3,6 +3,9 @@ package frc.robot.generated;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+
+import static frc.robot.generated.ChoreoTraj.StillTrajectory;
+
 import java.util.Map;
 import java.util.OptionalInt;
 
@@ -21,7 +24,7 @@ public record ChoreoTraj(
     String name,
     OptionalInt segment,
     double totalTimeSecs,
-    Pose2d initialPoseBlue,
+    Pose2d d,
     Pose2d endPoseBlue
 ) {
     public static final ChoreoTraj OutpostAndDepotTrajectory = new ChoreoTraj(
@@ -30,6 +33,13 @@ public record ChoreoTraj(
 	    11.3563,
 	    new Pose2d(3.598, 0.64, Rotation2d.fromRadians(3.142)),
 	    new Pose2d(0.941, 3.564, Rotation2d.fromRadians(3.142))
+	);
+	public static final ChoreoTraj StillTrajectory = new ChoreoTraj(
+		"StillTrajectory", 
+		OptionalInt.empty(), 
+		1, 
+		new Pose2d(3.3979992866516113, 4.892160415649414, Rotation2d.fromRadians(-0.6435011087932844)),
+		new Pose2d(3.1160900592803955, 5.113796234130859 , Rotation2d.fromRadians(-0.6919215757700458))
 	);
 	public static final ChoreoTraj OutpostAndDepotTrajectory$0 = new ChoreoTraj(
 	    "OutpostAndDepotTrajectory",
@@ -59,7 +69,14 @@ public record ChoreoTraj(
 	    new Pose2d(2.498, 4.035, Rotation2d.fromRadians(0)),
 	    new Pose2d(0.941, 3.564, Rotation2d.fromRadians(3.142))
 	);
-
+	public static final ChoreoTraj Still$0 = new ChoreoTraj(
+		"Still", 
+		OptionalInt.of(0), 
+		1,
+		new Pose2d(3.3979992866516113, 4.892160415649414, Rotation2d.fromRadians(-0.6435011087932844)),
+		new Pose2d(3.1160900592803955, 5.113796234130859 , Rotation2d.fromRadians(-0.6919215757700458))
+	);
+	
     /**
      * A map between trajectory names and their corresponding data.
      * This allows for trajectory data to be looked up with strings during runtime.
@@ -69,7 +86,9 @@ public record ChoreoTraj(
 		Map.entry("OutpostAndDepotTrajectory$0", OutpostAndDepotTrajectory$0),
 		Map.entry("OutpostAndDepotTrajectory$1", OutpostAndDepotTrajectory$1),
 		Map.entry("OutpostAndDepotTrajectory$2", OutpostAndDepotTrajectory$2),
-		Map.entry("OutpostAndDepotTrajectory$3", OutpostAndDepotTrajectory$3)
+		Map.entry("OutpostAndDepotTrajectory$3", OutpostAndDepotTrajectory$3),
+		Map.entry("StillTrajectory", StillTrajectory), 
+		Map.entry("StillTrajectory$0", Still$0)
     );
 
     /**

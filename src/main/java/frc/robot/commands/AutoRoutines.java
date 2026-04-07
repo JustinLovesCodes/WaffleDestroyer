@@ -8,6 +8,7 @@ import static frc.robot.generated.ChoreoTraj.OutpostAndDepotTrajectory$0;
 import static frc.robot.generated.ChoreoTraj.OutpostAndDepotTrajectory$1;
 import static frc.robot.generated.ChoreoTraj.OutpostAndDepotTrajectory$2;
 import static frc.robot.generated.ChoreoTraj.OutpostAndDepotTrajectory$3;
+import static frc.robot.generated.ChoreoTraj.Still$0;
 
 import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
@@ -32,7 +33,7 @@ public final class AutoRoutines {
     private final Feeder feeder;
     private final Shooter shooter;
     private final Hood hood;
-    private final Hanger hanger;
+    //private final Hanger hanger;
     private final Limelight limelight;
 
     private final SubsystemCommands subsystemCommands;
@@ -47,7 +48,7 @@ public final class AutoRoutines {
         Feeder feeder,
         Shooter shooter,
         Hood hood,
-        Hanger hanger,
+        //Hanger hanger,
         Limelight limelight
     ) {
         this.swerve = swerve;
@@ -56,10 +57,10 @@ public final class AutoRoutines {
         this.feeder = feeder;
         this.shooter = shooter;
         this.hood = hood;
-        this.hanger = hanger;
+        //this.hanger = hanger;
         this.limelight = limelight;
 
-        this.subsystemCommands = new SubsystemCommands(swerve, intake, floor, feeder, shooter, hood, hanger);
+        this.subsystemCommands = new SubsystemCommands(swerve, intake, floor, feeder, shooter, hood);
 
         this.autoFactory = swerve.createAutoFactory();
         this.autoChooser = new AutoChooser();
@@ -67,6 +68,7 @@ public final class AutoRoutines {
 
     public void configure() {
         autoChooser.addRoutine("Outpost and Depot", this::outpostAndDepotRoutine);
+        autoChooser.addRoutine("Still", this::stillRoutine);
         SmartDashboard.putData("Auto Chooser", autoChooser);
         RobotModeTriggers.autonomous().whileTrue(autoChooser.selectedCommandScheduler());
     }
@@ -85,12 +87,12 @@ public final class AutoRoutines {
             )
         );
 
-        routine.observe(hanger::isHomed).onTrue(
-            Commands.sequence(
-                Commands.waitSeconds(0.5),
-                intake.runOnce(() -> intake.set(Intake.Position.INTAKE))
-            )
+        
+        Commands.sequence(
+            Commands.waitSeconds(0.5),
+            intake.runOnce(() -> intake.set(Intake.Position.INTAKE))
         );
+        
 
         startToOutpost.doneDelayed(1).onTrue(outpostToDepot.cmd());
 
@@ -99,10 +101,15 @@ public final class AutoRoutines {
 
         depotToShootingPose.active().whileTrue(limelight.idle());
         depotToShootingPose.atTime(0.5).onTrue(
+            
             Commands.parallel(
-                shooter.spinUpCommand(2600),
-                hood.positionCommand(0.32)
-            )
+                shooter.spinUpCommand(2600)
+            ).andThen( Commands.waitSeconds(3.00),
+            Commands.parallel(
+                feeder.feedCommand(),
+                Commands.waitSeconds(0.125)
+                    .andThen(floor.feedCommand().alongWith(intake.agitateCommand()))
+            ))
         );
         depotToShootingPose.done().onTrue(
             Commands.sequence(
@@ -112,9 +119,36 @@ public final class AutoRoutines {
             )
         );
 
-        shootingPoseToTower.active().whileTrue(limelight.idle());
-        shootingPoseToTower.active().onTrue(hanger.positionCommand(Hanger.Position.HANGING));
-        shootingPoseToTower.done().onTrue(hanger.positionCommand(Hanger.Position.HUNG));
+        // shootingPoseToTower.active().whileTrue(limelight.idle());
+        // shootingPoseToTower.active().onTrue(hanger.positionCommand(Hanger.Position.HANGING));
+        // shootingPoseToTower.done().onTrue(hanger.positionCommand(Hanger.Position.HUNG));
+
+        return routine;
+    }
+    private AutoRoutine stillRoutine() {
+        final AutoRoutine routine = autoFactory.newRoutine("Still");
+        final AutoTrajectory still = Still$0.asAutoTraj(routine);
+
+        routine.active().onTrue(
+            Commands.sequence(
+                still.resetOdometry(),
+                still.cmd()
+            )
+        );
+
+        still.active().whileTrue(
+            Commands.sequence(     
+                Commands.parallel(
+                shooter.spinUpCommand(3400)
+            ).andThen(
+                Commands.parallel(
+                Commands.runOnce(()->feeder.set(Feeder.Speed.FEED)),
+                Commands.waitSeconds(0.125)
+            .andThen(Commands.runOnce(()->floor.set(Floor.Speed.FEED)).alongWith(intake.agitateCommand()))
+        ))
+        )
+        );
+
 
         return routine;
     }

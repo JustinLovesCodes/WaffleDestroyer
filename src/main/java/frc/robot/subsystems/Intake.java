@@ -24,6 +24,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
@@ -49,9 +50,10 @@ public class Intake extends SubsystemBase {
     }
 
     public enum Position {
-        HOMED(105),
-        STOWED(0),
-        INTAKE(90),
+        HOMED(109),
+        STOWED(20),
+        DEFENSE(-60),
+        INTAKE(70),
         AGITATE(-20);
 
         private final double degrees;
@@ -160,6 +162,9 @@ public class Intake extends SubsystemBase {
             rollerVoltageRequest
                 .withOutput(speed.voltage())
         );
+
+        SmartDashboard.putNumber("Intake Piviot", rollerMotor.getPosition().getValueAsDouble());
+
     }
 
     public Command intakeCommand() {

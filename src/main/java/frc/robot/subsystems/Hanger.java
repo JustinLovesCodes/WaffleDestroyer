@@ -34,6 +34,7 @@ import frc.robot.Constants.KrakenX60;
 import frc.robot.Ports;
 
 public class Hanger extends SubsystemBase {
+    
     public enum Position {
         HOMED(0),
         EXTEND_HOPPER(2),
@@ -62,7 +63,7 @@ public class Hanger extends SubsystemBase {
     private boolean isHomed = false;
 
     public Hanger() {
-        motor = new TalonFX(Ports.kHanger, Ports.kRoboRioCANBus);
+        motor = new TalonFX(Ports.kHanger, Ports.kCANivoreCANBus);
 
         final TalonFXConfiguration config = new TalonFXConfiguration()
             .withMotorOutput(
@@ -74,7 +75,7 @@ public class Hanger extends SubsystemBase {
                 new CurrentLimitsConfigs()
                     .withStatorCurrentLimit(Amps.of(20))
                     .withStatorCurrentLimitEnable(true)
-                    .withSupplyCurrentLimit(Amps.of(70))
+                    .withSupplyCurrentLimit(Amps.of(30))
                     .withSupplyCurrentLimitEnable(true)
             )
             .withMotionMagic(
@@ -148,4 +149,5 @@ public class Hanger extends SubsystemBase {
         builder.addDoubleProperty("Extension (inches)", () -> motorAngleToExtension(motor.getPosition().getValue()).in(Inches), null);
         builder.addDoubleProperty("Supply Current", () -> motor.getSupplyCurrent().getValue().in(Amps), null);
     }
+    
 }

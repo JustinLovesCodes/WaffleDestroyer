@@ -42,7 +42,7 @@ public class RobotContainer {
     private final Feeder feeder = new Feeder();
     private final Shooter shooter = new Shooter();
     private final Hood hood = new Hood();
-    private final Hanger hanger = new Hanger();
+    //private final Hanger hanger = new Hanger();
     private final Limelight limelight = new Limelight("limelight");
 
     private final SwerveTelemetry swerveTelemetry = new SwerveTelemetry(Driving.kMaxSpeed.in(MetersPerSecond));
@@ -56,7 +56,7 @@ public class RobotContainer {
         feeder,
         shooter,
         hood,
-        hanger,
+        //hanger,
         limelight
     );
     private final SubsystemCommands subsystemCommands = new SubsystemCommands(
@@ -66,7 +66,7 @@ public class RobotContainer {
         feeder,
         shooter,
         hood,
-        hanger,
+        //hanger,
         () -> -driver.getLeftY(),
         () -> -driver.getLeftX()
     );
@@ -92,15 +92,16 @@ public class RobotContainer {
         limelight.setDefaultCommand(updateVisionCommand());
 
         RobotModeTriggers.autonomous().or(RobotModeTriggers.teleop())
-            .onTrue(intake.homingCommand())
-            .onTrue(hanger.homingCommand());
+            .onTrue(intake.homingCommand());
+            //.onTrue(hanger.homingCommand());
 
-        // driver.rightTrigger().whileTrue(subsystemCommands.aimAndShoot());
+        driver.rightTrigger().whileTrue(subsystemCommands.aimAndShoot());
         driver.rightBumper().whileTrue(subsystemCommands.shootManually());
         driver.leftTrigger().whileTrue(intake.intakeCommand());
-        driver.leftBumper().onTrue(intake.runOnce(() -> intake.set(Intake.Position.STOWED)));
-        driver.povUp().onTrue(hanger.positionCommand(Hanger.Position.HANGING));
-        driver.povDown().onTrue(hanger.positionCommand(Hanger.Position.HUNG));
+        driver.leftTrigger().onFalse(intake.runOnce(() -> intake.set(Intake.Position.STOWED)));
+        driver.button(7).onTrue(intake.runOnce(() -> intake.set(Intake.Position.DEFENSE)));
+        //driver.povUp().onTrue(hanger.positionCommand(Hanger.Position.HANGING));
+        //driver.povDown().onTrue(hanger.positionCommand(Hanger.Position.HUNG));
     }
 
     private void configureManualDriveBindings() {
